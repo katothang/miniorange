@@ -1,0 +1,113 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:l="/lib/layout" xmlns:st="jelly:stapler">
+
+    <j:set var="showSecurityQuestionForConfiguration" value="${it.showSecurityQuestionForConfiguration()}"/>
+    <j:set var="showOtpOverEmailForConfiguration" value="${it.showOtpOverEmailForConfiguration()}"/>
+    <j:set var="contextPath" value="${it.getContextPath()}"/>
+
+    <j:if test="${!it.isUserAuthenticatedFromTfa()}">
+        <l:layout title="2FA Config" type="full-screen">
+            <l:main-panel>
+
+                <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.CSS.moUserConfig"/>
+
+                <div class="form-header">
+                    <img class="form-header-img" src="${contextPath}/plugin/miniorange-two-factor/images/logo.svg"
+                         alt="Img not found"/>
+                    <h1 class="form-header-title">Configure Two Factor</h1>
+                </div>
+
+                <p class="form-body-para">Please Configure your 2FA method</p>
+
+                <j:if test="${showSecurityQuestionForConfiguration}">
+                    <div class="user-security-methods">
+                        <a class="submit jenkins-button custom" href="../securityQuestionConfig/">
+                            Security Questions
+                        </a>
+                    </div>
+                </j:if>
+
+                <j:if test="${showOtpOverEmailForConfiguration}">
+                    <div class="user-security-methods">
+                        <div class="user-security-methods">
+                            <a class="submit jenkins-button custom"
+                               href="${it.getBaseUrl()}tfaUserAuth/otpOverEmailAuth/">
+                                Otp Over Email
+                            </a>
+                        </div>
+                    </div>
+                </j:if>
+
+                <div class="relative-links">
+                    <a href="${it.getContextPath()}/logout" class="logout-link">Cancel</a>
+                </div>
+            </l:main-panel>
+        </l:layout>
+    </j:if>
+
+
+    <j:if test="${it.isUserAuthenticatedFromTfa()}">
+        <l:layout title="2FA Config" type="one-column">
+            <l:breadcrumb title="${% Two factor authentication}" />
+
+            <l:main-panel>
+
+                <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.CSS.moUserConfigCards"/>
+
+                <h1 class="user-security-methods-heading">Configure your 2FA settings for enhanced security</h1>
+                <div class="user-security-methods">
+
+                    <j:if test="${it.isSecurityQuestionConfigurationIsEnabled()}">
+                        <div class="card">
+                            <h3 class="card-heading">Security Question</h3>
+                            <div class="card-data">
+                                <img src="${contextPath}/plugin/miniorange-two-factor/images/MoSecurityQuestionIcon.png"
+                                     alt="Img not found"/>
+                                <span>User need's to answer the security questions to access the jenkins.</span>
+                            </div>
+
+                            <j:if test="${showSecurityQuestionForConfiguration}">
+                                <a class="card-link-btn" href="../securityQuestionConfig/">Configure</a>
+                            </j:if>
+
+                            <j:if test="${! showSecurityQuestionForConfiguration}">
+                                <form method="post" action="../securityQuestionConfig/reset">
+                                    <button class="card-link-btn reset-button">Reset</button>
+                                </form>
+                            </j:if>
+
+                        </div>
+                    </j:if>
+
+
+                    <j:if test="${it.isOtpOverEmailIsEnabled()}">
+                        <div class="card">
+                            <h3 class="card-heading">OTP over email</h3>
+                            <div class="card-data">
+                                <img src="${contextPath}/plugin/miniorange-two-factor/images/MoOtpOverEmailLogo.png"
+                                     alt="Img not found"/>
+                                <span>User need's to enter the OTP received on his email.</span>
+                            </div>
+
+                            <j:if test="${showOtpOverEmailForConfiguration}">
+                                <a class="card-link-btn" href="${contextPath}/tfaUserAuth/otpOverEmailAuth/">Configure</a>
+                            </j:if>
+
+                            <j:if test="${! showOtpOverEmailForConfiguration}">
+                                <form method="post" action="../otpOverEmailConfig/reset">
+                                    <button class="card-link-btn reset-button">Reset</button>
+                                </form>
+                            </j:if>
+
+                        </div>
+                    </j:if>
+
+                </div>
+
+            </l:main-panel>
+
+        </l:layout>
+    </j:if>
+
+
+</j:jelly>

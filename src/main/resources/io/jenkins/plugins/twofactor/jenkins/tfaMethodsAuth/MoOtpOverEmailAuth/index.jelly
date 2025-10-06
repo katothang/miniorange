@@ -1,0 +1,105 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:l="/lib/layout" xmlns:st="jelly:stapler">
+
+    <j:set var="otpOverEmailConfigured" value="${it.isOtpOverEmailConfigured()}"/>
+    <j:set var="userAuthenticatedFromTfa" value="${it.isUserAuthenticatedFromTfa()}"/>
+
+    <l:layout title="Email configuration" type="${userAuthenticatedFromTfa ? 'one-column' : 'full-screen'}">
+
+        <l:breadcrumb title="${% Two factor authentication}" />
+
+        <l:main-panel>
+            <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.CSS.moSecurityQuestionAuth"/>
+            <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.JS.moOtpOverEmailAuth"/>
+            <div class="config body">
+                <f:form method="post" action="saveOrValidateOtpOverEmailConfig" name="replace"
+                        descriptor="${it.DESCRIPTOR}">
+
+                    <div class="form-header">
+                        <img class="form-header-img" src="${it.getContextPath()}/plugin/miniorange-two-factor/images/logo.svg"
+                             alt="Img not found"/>
+                        <span class="form-header-title">
+                            <j:if test="${otpOverEmailConfigured}">
+                                Validate
+                            </j:if>
+                            <j:if test="${not(otpOverEmailConfigured)}">
+                                CONFIGURE
+                            </j:if>
+                            2FA - OTP OVER EMAIL
+                        </span>
+                    </div>
+
+                    <j:if test="${it.getShowWrongCredentialWarning()}">
+                        <p class="alert alert-danger">
+                            <b>Please enter correct OTP</b>
+                        </p>
+                    </j:if>
+
+
+                    <hr style="margin-bottom: 18px"/>
+                    <h3 style="margin-bottom: 18px">Hello, ${it.getUserId()}</h3>
+
+                    <p class="alert alert-info">
+
+                        <j:if test="${it.isOtpSentToUser()}">
+                            Please click on <b>Resend OTP </b>
+                            If you haven't received OTP to your registered email address.
+                        </j:if>
+
+                        <j:if test="${not(it.isOtpSentToUser())}">
+                            <span>Please click to send OTP button to send OTP to your registered email address.</span>
+                        </j:if>
+
+                        <j:if test="${not(otpOverEmailConfigured)}">
+                            <span><b>(${it.getUserEmailAddress()})</b></span>
+                        </j:if>
+
+                        <span>Then enter OTP you received on your configured email address to get access of Jenkins.</span>
+
+                    </p>
+
+                    <f:entry title="Enter OTP received on email">
+
+                        <div style="display: flex; gap: 10px">
+                            <f:textbox field="emailOtpForVerification" placeholder="Enter OTP"
+                                       default=""/>
+
+                            <j:if test="${it.isOtpSentToUser()}">
+                                <f:submit value="${%validate}"/>
+                            </j:if>
+                        </div>
+
+                    </f:entry>
+
+                </f:form>
+
+                <div>
+                    <j:if test="${it.isOtpSentToUser()}">
+                        <form style="display: inline-block" method="post" action="./resendOtp" id="resendOTPForm">
+                            <button class="resend-otp" method="post" action="./resendOtp" id="resendOTPForm" >Resend OTP</button>
+                        </form>
+                    </j:if>
+
+                    <j:if test="${not(it.isOtpSentToUser())}">
+                        <form style="display: inline-block" method="post" action="./resendOtp" id="resendOTPForm">
+                            <button class="resend-otp"  method="post" action="./resendOtp" id="resendOTPForm" >send OTP</button>
+                        </form>
+                    </j:if>
+
+
+                    <j:if test="${not(userAuthenticatedFromTfa)}">
+                        <a href="../" style="display: inline-block; margin-left: 15px;">Validate by other method?</a>
+                    </j:if>
+                </div>
+
+
+
+            </div>
+
+        </l:main-panel>
+
+    </l:layout>
+
+</j:jelly>
+
+
