@@ -103,6 +103,10 @@ public class MoGlobalConfigView extends ManagementLink implements Describable<Mo
         return MoGlobalConfig.get().getSenderEmailAddress();
     }
 
+    public String getBypassUsers() {
+        return MoGlobalConfig.get().getBypassUsers();
+    }
+
     public MoGlobalAdvancedSettings getAdvancedSettings() {
         return new MoGlobalAdvancedSettings(MoGlobalConfig.get().getAdvancedSettingsDTO());
     }

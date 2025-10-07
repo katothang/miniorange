@@ -31,6 +31,7 @@ import hudson.XmlFile;
 import io.jenkins.plugins.twofactor.jenkins.dto.MoAdvanceSettingsDTO;
 import io.jenkins.plugins.twofactor.jenkins.dto.MoOtpOverEmailDto;
 import java.io.File;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
@@ -49,6 +50,7 @@ public class MoGlobalConfig extends GlobalConfiguration {
   private Boolean enableSecurityQuestionsAuthentication;
   private MoOtpOverEmailDto otpOverEmailDto;
   private MoAdvanceSettingsDTO moAdvancedSettingsDTO;
+  private String bypassUsers;
 
 
   public MoGlobalConfig() {
@@ -100,12 +102,34 @@ public class MoGlobalConfig extends GlobalConfiguration {
     return moAdvancedSettingsDTO;
   }
 
+  @SuppressWarnings("unused")
+  public String getBypassUsers() {
+    return bypassUsers != null ? bypassUsers : "";
+  }
+
+  @SuppressWarnings("unused")
+  @DataBoundSetter
+  public void setBypassUsers(String bypassUsers) {
+    this.bypassUsers = bypassUsers;
+  }
+
+  public List<String> getBypassUsersList() {
+    if (bypassUsers == null || bypassUsers.trim().isEmpty()) {
+      return Collections.emptyList();
+    }
+    return Arrays.asList(bypassUsers.split("[,\\s]+"));
+  }
+
   public void saveMoGlobalConfigViewForm(JSONObject formData) {
     try {
       enableTfa = formData.getBoolean("enableTfa");
       enableTfaForAllUsers = enableTfa;
       moPluginSettings.put(ENABLE_2FA_FOR_ALL_USERS.getKey(), enableTfa);
       enableSecurityQuestionsAuthentication = formData.getBoolean("enableSecurityQuestion");
+      
+      if (formData.containsKey("bypassUsers")) {
+        bypassUsers = formData.getString("bypassUsers");
+      }
 
       if (formData.containsKey("enableOtpOverEmail")) {
         JSONObject otpOverEmail = formData.getJSONObject("enableOtpOverEmail");
