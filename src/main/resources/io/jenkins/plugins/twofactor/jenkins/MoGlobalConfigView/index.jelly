@@ -53,10 +53,9 @@
                             <f:checkbox checked="${it.getEnableTfa()}"/>
                         </f:entry>
 
-                        <h4>OR</h4>
-
-                        <f:entry title="${%Enter groups names to enable 2FA}" field="enableTfaForGroups">
-                            <f:textbox placeholder="Available in premium version" disabled="true"/>
+                        <f:entry title="${%Bypass 2FA for specific users}" field="bypassUsers" 
+                                 description="Enter usernames separated by commas or spaces (e.g. caunv1,thangnv9...)">
+                            <f:textbox value="${it.getBypassUsers()}"/>
                         </f:entry>
                     </f:section>
 
@@ -76,21 +75,6 @@
                                 </f:optionalBlock>
                             </table>
                         </f:block>
-
-                        <f:entry title="${%Duo push notification}"
-                                 field="enableDuoPush">
-                            <f:checkbox class="checkboxToSkip" checked="false"/>
-                        </f:entry>
-
-                        <f:entry title="${%Google authenticator}"
-                                 field="enableMobileAuthenticator">
-                            <f:checkbox class="checkboxToSkip" checked="false"/>
-                        </f:entry>
-
-                        <f:entry title="${%OTP over SMS}"
-                                 field="enableOtpOverSms">
-                            <f:checkbox class="checkboxToSkip" checked="false"/>
-                        </f:entry>
                     </f:section>
 
                     <f:bottomButtonBar>

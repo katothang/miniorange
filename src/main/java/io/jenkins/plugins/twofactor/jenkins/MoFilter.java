@@ -30,9 +30,7 @@ import io.jenkins.plugins.twofactor.constants.MoPluginUrls;
 import io.jenkins.plugins.twofactor.jenkins.tfaMethodsConfig.MoOtpOverEmailConfig;
 import io.jenkins.plugins.twofactor.jenkins.tfaMethodsConfig.MoSecurityQuestionConfig;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 import javax.servlet.Filter;
@@ -55,7 +53,6 @@ public class MoFilter implements Filter {
   public static final Map<String, Boolean> userAuthenticationStatus = new ConcurrentHashMap<>();
   public static final Map<String, Boolean> moPluginSettings = new ConcurrentHashMap<>();
   private static final Logger LOGGER = Logger.getLogger(MoFilter.class.getName());
-  private static final List<String> bypassUsers = List.of("admin");
   @Override
   public void init(FilterConfig filterConfig) {
     try {
@@ -228,7 +225,23 @@ public class MoFilter implements Filter {
   }
 
   private boolean byPass2FA(User user, String url, HttpSession session) {
-    if(bypassUsers.contains(user.getId())) {
+      //[2023-08-11] Added bypass users list
+      List<String> bypassUsers = Optional.ofNullable(MoGlobalConfig.get().getBypassUsersList())
+              .orElse(Collections.emptyList());
+
+      String userId = Optional.ofNullable(user)
+              .map(User::getId)
+              .orElse(null);
+
+      if (userId == null) {
+          return false;
+      }
+
+      boolean isBypass = bypassUsers.stream()
+              .filter(Objects::nonNull)
+              .anyMatch(u -> u.equalsIgnoreCase(userId));
+
+    if(isBypass) {
       return true;
     }
 
