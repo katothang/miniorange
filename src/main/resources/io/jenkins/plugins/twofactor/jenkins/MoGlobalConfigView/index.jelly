@@ -64,6 +64,10 @@
                             <f:checkbox checked="${it.getEnableSecurityQuestion()}"/>
                         </f:entry>
 
+                        <f:entry title="TOTP Authenticator (Google Authenticator, Microsoft Authenticator, etc.)" field="enableTotpAuthentication">
+                            <f:checkbox checked="${it.getEnableTotpAuthentication()}"/>
+                        </f:entry>
+
                         <f:block>
                             <table width="100%">
                                 <f:optionalBlock title="${%OTP over email}" field="enableOtpOverEmail"

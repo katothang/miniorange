@@ -29,6 +29,7 @@ import hudson.util.PluginServletFilter;
 import io.jenkins.plugins.twofactor.constants.MoPluginUrls;
 import io.jenkins.plugins.twofactor.jenkins.tfaMethodsConfig.MoOtpOverEmailConfig;
 import io.jenkins.plugins.twofactor.jenkins.tfaMethodsConfig.MoSecurityQuestionConfig;
+import io.jenkins.plugins.twofactor.jenkins.tfaMethodsConfig.MoTotpConfig;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -107,6 +108,20 @@ public class MoFilter implements Filter {
             }
           }
           break;
+        case "MoTotpConfig":
+          if (MoGlobalConfig.get().isEnableTotpAuthentication()) {
+            totalEnabledMethods++;
+            if (((MoTotpConfig) property).isConfigured()) {
+              redirectUrl =
+                  MO_USER_AUTH.getUrl()
+                      + "/"
+                      + MoPluginUrls.Urls.MO_TOTP_AUTH.getUrl()
+                      + "/";
+              totalConfiguredMethods++;
+              break;
+            }
+          }
+          break;
         default:
           break;
       }
@@ -172,6 +187,7 @@ public class MoFilter implements Filter {
             MO_SECURITY_QUESTION_CONFIG.getUrl(),
             "/miniorange-two-factor",
             MoPluginUrls.Urls.MO_OTP_OVER_EMAIL_CONFIG.getUrl(),
+            MoPluginUrls.Urls.MO_TOTP_CONFIG.getUrl(),
             MO_USER_AUTH.getUrl() + "/");
     return urlsToAvoidRedirect(url, tfaPluginUrls);
   }

@@ -31,6 +31,7 @@ import hudson.Extension;
 import hudson.model.*;
 import io.jenkins.plugins.twofactor.jenkins.tfaMethodsConfig.MoOtpOverEmailConfig;
 import io.jenkins.plugins.twofactor.jenkins.tfaMethodsConfig.MoSecurityQuestionConfig;
+import io.jenkins.plugins.twofactor.jenkins.tfaMethodsConfig.MoTotpConfig;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -97,6 +98,17 @@ public class MoUserConfig extends UserProperty implements Action {
     MoOtpOverEmailConfig otpOverEmailConfig = user.getProperty(MoOtpOverEmailConfig.class);
     boolean isConfigured = otpOverEmailConfig != null && otpOverEmailConfig.isConfigured();
     boolean isEnabled = isOtpOverEmailIsEnabled();
+    return !isConfigured && isEnabled;
+  }
+
+  public boolean isTotpIsEnabled() {
+    return MoGlobalConfig.get().isEnableTotpAuthentication();
+  }
+
+  public boolean showTotpForConfiguration() {
+    MoTotpConfig totpConfig = user.getProperty(MoTotpConfig.class);
+    boolean isConfigured = totpConfig != null && totpConfig.isConfigured();
+    boolean isEnabled = isTotpIsEnabled();
     return !isConfigured && isEnabled;
   }
 

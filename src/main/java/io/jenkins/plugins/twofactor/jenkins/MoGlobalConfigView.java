@@ -99,6 +99,10 @@ public class MoGlobalConfigView extends ManagementLink implements Describable<Mo
         return MoGlobalConfig.get().isEnableOtpOverEmailAuthentication();
     }
 
+    public boolean getEnableTotpAuthentication() {
+        return MoGlobalConfig.get().isEnableTotpAuthentication();
+    }
+
     public String getSenderEmailAddress() {
         return MoGlobalConfig.get().getSenderEmailAddress();
     }

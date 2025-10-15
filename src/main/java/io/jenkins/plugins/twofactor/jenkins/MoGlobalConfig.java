@@ -48,6 +48,7 @@ public class MoGlobalConfig extends GlobalConfiguration {
   private Boolean enableTfa;
   private Boolean enableTfaForAllUsers;
   private Boolean enableSecurityQuestionsAuthentication;
+  private Boolean enableTotpAuthentication;
   private MoOtpOverEmailDto otpOverEmailDto;
   private MoAdvanceSettingsDTO moAdvancedSettingsDTO;
   private String bypassUsers;
@@ -91,6 +92,17 @@ public class MoGlobalConfig extends GlobalConfiguration {
   }
 
   @SuppressWarnings("unused")
+  public Boolean isEnableTotpAuthentication() {
+    return enableTotpAuthentication != null ? enableTotpAuthentication : false;
+  }
+
+  @SuppressWarnings("unused")
+  @DataBoundSetter
+  public void setEnableTotpAuthentication(boolean enableTotpAuthentication) {
+    this.enableTotpAuthentication = enableTotpAuthentication;
+  }
+
+  @SuppressWarnings("unused")
   public String getSenderEmailAddress() {
     return otpOverEmailDto != null ? otpOverEmailDto.getSenderEmailAddress() : "";
   }
@@ -126,7 +138,8 @@ public class MoGlobalConfig extends GlobalConfiguration {
       enableTfaForAllUsers = enableTfa;
       moPluginSettings.put(ENABLE_2FA_FOR_ALL_USERS.getKey(), enableTfa);
       enableSecurityQuestionsAuthentication = formData.getBoolean("enableSecurityQuestion");
-      
+      enableTotpAuthentication = formData.optBoolean("enableTotpAuthentication", false);
+
       if (formData.containsKey("bypassUsers")) {
         bypassUsers = formData.getString("bypassUsers");
       }

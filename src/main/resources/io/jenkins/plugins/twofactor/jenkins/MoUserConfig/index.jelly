@@ -3,6 +3,7 @@
 
     <j:set var="showSecurityQuestionForConfiguration" value="${it.showSecurityQuestionForConfiguration()}"/>
     <j:set var="showOtpOverEmailForConfiguration" value="${it.showOtpOverEmailForConfiguration()}"/>
+    <j:set var="showTotpForConfiguration" value="${it.showTotpForConfiguration()}"/>
     <j:set var="contextPath" value="${it.getContextPath()}"/>
 
     <j:if test="${!it.isUserAuthenticatedFromTfa()}">
@@ -35,6 +36,15 @@
                                 Otp Over Email
                             </a>
                         </div>
+                    </div>
+                </j:if>
+
+                <j:if test="${showTotpForConfiguration}">
+                    <div class="user-security-methods">
+                        <a class="submit jenkins-button custom"
+                           href="${it.getBaseUrl()}tfaUserAuth/totpAuth/">
+                            TOTP Authenticator
+                        </a>
                     </div>
                 </j:if>
 
@@ -95,6 +105,28 @@
 
                             <j:if test="${! showOtpOverEmailForConfiguration}">
                                 <form method="post" action="../otpOverEmailConfig/reset">
+                                    <button class="card-link-btn reset-button">Reset</button>
+                                </form>
+                            </j:if>
+
+                        </div>
+                    </j:if>
+
+                    <j:if test="${it.isTotpIsEnabled()}">
+                        <div class="card">
+                            <h3 class="card-heading">TOTP Authenticator</h3>
+                            <div class="card-data">
+                                <img src="${contextPath}/plugin/miniorange-two-factor/images/logo.svg"
+                                     alt="Img not found" style="width: 50px;"/>
+                                <span>User need's to enter the 6-digit code from their authenticator app.</span>
+                            </div>
+
+                            <j:if test="${showTotpForConfiguration}">
+                                <a class="card-link-btn" href="${contextPath}/tfaUserAuth/totpAuth/">Configure</a>
+                            </j:if>
+
+                            <j:if test="${! showTotpForConfiguration}">
+                                <form method="post" action="../totpConfig/reset">
                                     <button class="card-link-btn reset-button">Reset</button>
                                 </form>
                             </j:if>

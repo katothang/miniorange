@@ -1,0 +1,93 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:l="/lib/layout" xmlns:st="jelly:stapler">
+
+    <j:set var="totpConfigured" value="${it.isConfigured()}"/>
+    <j:set var="userAuthenticatedFromTfa" value="${it.isUserAuthenticatedFromTfa()}"/>
+
+    <l:layout title="TOTP Authenticator Configuration" type="${userAuthenticatedFromTfa ? 'one-column' : 'full-screen'}">
+
+        <l:breadcrumb title="${% Two factor authentication}" />
+
+        <l:main-panel>
+            <st:adjunct includes="io.jenkins.plugins.twofactor.jenkins.assets.CSS.moSecurityQuestionAuth"/>
+            <div class="config body">
+                <f:form method="post" action="saveTotpConfig" name="totpConfigForm" descriptor="${it.DESCRIPTOR}">
+
+                    <div class="form-header">
+                        <img class="form-header-img" src="${it.getContextPath()}/plugin/miniorange-two-factor/images/logo.svg"
+                             alt="Img not found"/>
+                        <span class="form-header-title">
+                            <j:if test="${totpConfigured}">
+                                RECONFIGURE
+                            </j:if>
+                            <j:if test="${not(totpConfigured)}">
+                                CONFIGURE
+                            </j:if>
+                            2FA - TOTP AUTHENTICATOR
+                        </span>
+                    </div>
+
+                    <hr style="margin-bottom: 18px"/>
+                    <h3 style="margin-bottom: 18px">Hello, ${it.getUserId()}</h3>
+
+                    <j:if test="${not(totpConfigured)}">
+                        <div class="alert alert-info" style="margin-bottom: 20px;">
+                            <p><b>Setup Instructions:</b></p>
+                            <ol style="margin-left: 20px;">
+                                <li>Install a TOTP authenticator app on your mobile device (Google Authenticator, Microsoft Authenticator, Authy, etc.)</li>
+                                <li>Scan the QR code below with your authenticator app</li>
+                                <li>Or manually enter the secret key into your app</li>
+                                <li>Enter the 6-digit code from your app to verify the setup</li>
+                            </ol>
+                        </div>
+
+                        <div style="text-align: center; margin: 30px 0;">
+                            <h4>Scan this QR Code:</h4>
+                            <img src="${it.getQRCodeDataUri()}" alt="QR Code" style="border: 2px solid #ccc; padding: 10px; margin: 20px 0;"/>
+                            
+                            <div style="margin-top: 20px;">
+                                <p><b>Or enter this secret key manually:</b></p>
+                                <code style="font-size: 16px; background: #f5f5f5; padding: 10px; display: inline-block; border: 1px solid #ddd;">
+                                    ${it.getSecretKeyPlainText()}
+                                </code>
+                            </div>
+                        </div>
+                    </j:if>
+
+                    <j:if test="${totpConfigured}">
+                        <p class="alert alert-success">
+                            <b>TOTP Authenticator is already configured for your account.</b>
+                        </p>
+                        <p class="alert alert-info">
+                            Enter the 6-digit code from your authenticator app to verify and reconfigure.
+                        </p>
+                    </j:if>
+
+                    <f:entry title="Enter 6-digit verification code">
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <f:textbox field="totpVerificationCode" 
+                                       placeholder="000000" 
+                                       style="width: 150px; font-size: 18px; text-align: center; letter-spacing: 5px;"
+                                       default=""/>
+                            <f:submit value="${%Verify and Save}"/>
+                        </div>
+                    </f:entry>
+
+                </f:form>
+
+                <div style="margin-top: 20px;">
+                    <j:if test="${totpConfigured and userAuthenticatedFromTfa}">
+                        <form style="display: inline-block" method="post" action="./reset">
+                            <button class="jenkins-button jenkins-button--tertiary" type="submit">Reset TOTP Configuration</button>
+                        </form>
+                    </j:if>
+                </div>
+
+            </div>
+
+        </l:main-panel>
+
+    </l:layout>
+
+</j:jelly>
+

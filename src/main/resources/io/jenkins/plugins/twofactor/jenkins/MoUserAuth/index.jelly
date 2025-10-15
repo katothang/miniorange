@@ -9,6 +9,7 @@
 
             <j:set var="securityQuestionConfigured" value="${it.showSecurityQuestionForConfiguration()}"/>
             <j:set var="otpOverEmailConfigured" value="${it.showOtpOverEmailForConfiguration()}"/>
+            <j:set var="totpConfigured" value="${it.showTotpForConfiguration()}"/>
 
 
             <div class="form-header">
@@ -30,6 +31,14 @@
                 <div class="user-security-methods">
                     <a class="submit jenkins-button custom" href="./otpOverEmailAuth/">
                         Otp Over Email
+                    </a>
+                </div>
+            </j:if>
+
+            <j:if test="${totpConfigured}">
+                <div class="user-security-methods">
+                    <a class="submit jenkins-button custom" href="./totpAuth/">
+                        TOTP Authenticator
                     </a>
                 </div>
             </j:if>

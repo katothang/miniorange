@@ -34,8 +34,10 @@ import hudson.model.RootAction;
 import hudson.model.User;
 import io.jenkins.plugins.twofactor.jenkins.tfaMethodsAuth.MoOtpOverEmailAuth;
 import io.jenkins.plugins.twofactor.jenkins.tfaMethodsAuth.MoSecurityQuestionAuth;
+import io.jenkins.plugins.twofactor.jenkins.tfaMethodsAuth.MoTotpAuth;
 import io.jenkins.plugins.twofactor.jenkins.tfaMethodsConfig.MoOtpOverEmailConfig;
 import io.jenkins.plugins.twofactor.jenkins.tfaMethodsConfig.MoSecurityQuestionConfig;
+import io.jenkins.plugins.twofactor.jenkins.tfaMethodsConfig.MoTotpConfig;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -51,6 +53,7 @@ public class MoUserAuth implements RootAction, Describable<MoUserAuth> {
   private static final Logger LOGGER = Logger.getLogger(MoUserAuth.class.getName());
   Map<String, MoSecurityQuestionAuth> moSecurityQuestionAuthMap = new HashMap<>();
   Map<String, MoOtpOverEmailAuth> moOtpOverEmailAuthMap = new HashMap<>();
+  Map<String, MoTotpAuth> moTotpAuthMap = new HashMap<>();
 
   @Override
   public String getIconFileName() {
@@ -100,9 +103,18 @@ public class MoUserAuth implements RootAction, Describable<MoUserAuth> {
     return moOtpOverEmailAuthMap.get(getUserId());
   }
 
+  @SuppressWarnings("unused")
+  public MoTotpAuth getTotpAuth() {
+    if (moTotpAuthMap.get(getUserId()) == null) {
+      moTotpAuthMap.put(getUserId(), new MoTotpAuth());
+    }
+    return moTotpAuthMap.get(getUserId());
+  }
+
   public void cleanUserAuthResource(String userId) {
     moSecurityQuestionAuthMap.remove(userId);
     moOtpOverEmailAuthMap.remove(userId);
+    moTotpAuthMap.remove(userId);
   }
 
   public boolean showSecurityQuestionForConfiguration() {
@@ -122,6 +134,16 @@ public class MoUserAuth implements RootAction, Describable<MoUserAuth> {
     MoOtpOverEmailConfig otpOverEmailConfig = user.getProperty(MoOtpOverEmailConfig.class);
     boolean isConfigured = otpOverEmailConfig != null && otpOverEmailConfig.isConfigured();
     boolean isEnabled = MoGlobalConfig.get().isEnableOtpOverEmailAuthentication();
+    return isConfigured && isEnabled;
+  }
+
+  @SuppressWarnings("unused")
+  public boolean showTotpForConfiguration() {
+    User user = User.current();
+    assert user != null;
+    MoTotpConfig totpConfig = user.getProperty(MoTotpConfig.class);
+    boolean isConfigured = totpConfig != null && totpConfig.isConfigured();
+    boolean isEnabled = MoGlobalConfig.get().isEnableTotpAuthentication();
     return isConfigured && isEnabled;
   }
 
