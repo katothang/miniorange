@@ -10,30 +10,6 @@
                 <l:task title="Advanced settings" href="./advancedSettings" icon="symbol-settings"/>
                 <l:task title="User Management" href="./userManagement" icon="symbol-people"/>
             </l:tasks>
-
-            <div class="mo-contact-us-container">
-                <h4 >Contact us:</h4>
-                <div class="content">
-                    <div class="mo-contact-method">
-                        <div class="mo-contact-icon">✉️</div>
-                        <div class="mo-contact-details">
-                            <a href="mailto:support-atlassian@miniorange.atlassian.net">support-atlassian@miniorange.atlassian.net</a>
-                        </div>
-                    </div>
-                    <div class="mo-contact-method">
-                        <div class="mo-contact-icon">📹</div>
-                        <div class="mo-contact-details">
-                            <a href="https://calendly.com/support-miniorange/jenkins-2fa" target="_blank">Free setup assistance</a>
-                        </div>
-                    </div>
-                    <div class="mo-contact-method">
-                        <div class="mo-contact-icon">📞</div>
-                        <div class="mo-contact-details">
-                            <a href="tel:+19786589387">+1 978 658 9387</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </l:side-panel>
 
         <l:main-panel>

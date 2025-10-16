@@ -21,6 +21,8 @@
                     </p>
                     <p>2. Click on "Unbypass OTP" to remove a user from the bypass list (they will require 2FA).
                     </p>
+                    <p>3. Click on "Reset TOTP" to reset TOTP configuration for a user (only visible if TOTP is configured).
+                    </p>
                 </div>
             </div>
 
@@ -32,7 +34,7 @@
                             <select name="action" id="action">
                                 <f:option value="enable">Enable 2FA</f:option>
                                 <f:option value="disable">Disable 2FA</f:option>
-                                <f:option value="reset">Reset 2FA</f:option>
+                                <f:option value="reset">Reset TOTP</f:option>
                             </select>
                         </f:entry>
                     </div>
@@ -60,6 +62,7 @@
                             <th>User ID</th>
                             <th>Name</th>
                             <th>2FA Status</th>
+                            <th>TOTP Status</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -80,6 +83,9 @@
                                 <td class="user-status">
                                     ${it.get2FAStatus(user)}
                                 </td>
+                                <td class="totp-status">
+                                    ${it.getTotpStatus(user)}
+                                </td>
                                 <td>
                                     <j:if test="${it.isUserBypassed(user)}">
                                         <!-- User is bypassed - show Unbypass OTP button -->
@@ -95,6 +101,15 @@
                                             <input type="hidden" name="userId" value="${user.id}"/>
                                             <a href="#" onclick="if(confirm('Are you sure you want to bypass 2FA for ${user.id}? They will skip 2FA authentication.')) { this.closest('form').submit(); } return false;"
                                                style="color:#006fe6" class="jenkins-table__link user-action-link">Bypass OTP</a>
+                                        </form>
+                                    </j:if>
+                                    <!-- Reset TOTP button - only visible when TOTP is configured -->
+                                    <j:if test="${it.hasTotpConfigured(user)}">
+                                        <span style="margin: 0 5px;">|</span>
+                                        <form method="post" action="resetUser2FA" style="display:inline;">
+                                            <input type="hidden" name="userId" value="${user.id}"/>
+                                            <a href="#" onclick="if(confirm('Are you sure you want to reset TOTP for ${user.id}? They will need to reconfigure their TOTP authenticator.')) { this.closest('form').submit(); } return false;"
+                                               style="color:#d33" class="jenkins-table__link user-action-link">Reset TOTP</a>
                                         </form>
                                     </j:if>
                                 </td>
