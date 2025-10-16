@@ -41,19 +41,49 @@ form.addEventListener("submit", function (event) {
     event.preventDefault();
 });
 
-//bottom alert banner
+//bottom alert banner for premium features (bulk actions)
 document.addEventListener("DOMContentLoaded", function () {
-    // Select all spans with the class 'actionLink'
-    var allSpans = document.querySelectorAll('.actionLink');
-    var allAlertTriggers = Array.from(allSpans);
-    allAlertTriggers.push(document.querySelector('.jenkins-button'));
+    // Only show premium banner for bulk action button
+    var bulkActionButton = document.querySelector('.jenkins-button');
     var banner = document.getElementById('premiumBanner');
-     allAlertTriggers.forEach(function (span) {
-             span.addEventListener('click', function () {
-                 banner.style.display = 'block';
-                 setTimeout(function () {
-                    banner.style.display = 'none';
-                 }, 3000);
-            });
-     });
-})
+
+    if (bulkActionButton && banner) {
+        bulkActionButton.addEventListener('click', function (event) {
+            event.preventDefault();
+            banner.style.display = 'block';
+            setTimeout(function () {
+                banner.style.display = 'none';
+            }, 3000);
+        });
+    }
+
+    // Check for success/error messages in URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('success')) {
+        showSuccessBanner();
+    } else if (urlParams.has('error')) {
+        showErrorBanner();
+    }
+});
+
+// Show success banner
+function showSuccessBanner() {
+    var successBanner = document.getElementById('successBanner');
+    if (successBanner) {
+        successBanner.style.display = 'block';
+        setTimeout(function () {
+            successBanner.style.display = 'none';
+        }, 5000);
+    }
+}
+
+// Show error banner
+function showErrorBanner() {
+    var errorBanner = document.getElementById('errorBanner');
+    if (errorBanner) {
+        errorBanner.style.display = 'block';
+        setTimeout(function () {
+            errorBanner.style.display = 'none';
+        }, 5000);
+    }
+}

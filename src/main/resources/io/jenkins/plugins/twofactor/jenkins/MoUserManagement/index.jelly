@@ -16,19 +16,10 @@
 
             <div class="jenkins-alert jenkins-alert-info">
                 <div class="info-div1">
-                    <p>✨With the Premium version, you can:</p>
-                    <p>1. Click on the Enable 2FA/Disable 2FA/Reset 2FA link for individual users to manage their 2FA
-                        settings effortlessly.
+                    <p>✨ User 2FA Management:</p>
+                    <p>1. Click on "Bypass OTP" to add a user to the bypass list (they will skip 2FA).
                     </p>
-                    <p>2. Select checkboxes for single, multiple or all users and apply bulk actions to Enable, Disable,
-                        or Reset 2FA settings with a single click.
-                    </p>
-                </div>
-                <div class="info-div2">
-                    <p>🚀 Unlock these features now! <a
-                            href="https://www.miniorange.com/atlassian/jenkins-two-factor-authentication-2fa-mfa/#free-plugin"
-                            target="_blank">Take a free trial of Premium Plugin
-                    </a> and experience seamless 2FA management.
+                    <p>2. Click on "Unbypass OTP" to remove a user from the bypass list (they will require 2FA).
                     </p>
                 </div>
             </div>
@@ -68,6 +59,7 @@
                             </th>
                             <th>User ID</th>
                             <th>Name</th>
+                            <th>2FA Status</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -85,16 +77,25 @@
                                 <td class="user-name">
                                     ${user.displayName}
                                 </td>
+                                <td class="user-status">
+                                    ${it.get2FAStatus(user)}
+                                </td>
                                 <td>
-                                    <j:if test="${it.getStatus(user.id)}">
-                                        <span style="color:#006fe6" class="actionLink jenkins-table__link">Disable
-                                            2FA</span> <span class="backslash">/</span>
-                                        <span style="color:#006fe6" class="actionLink jenkins-table__link">Reset 2FA
-                                        </span>
+                                    <j:if test="${it.isUserBypassed(user)}">
+                                        <!-- User is bypassed - show Unbypass OTP button -->
+                                        <form method="post" action="unbypassUser2FA" style="display:inline;">
+                                            <input type="hidden" name="userId" value="${user.id}"/>
+                                            <a href="#" onclick="if(confirm('Are you sure you want to unbypass 2FA for ${user.id}? They will require 2FA authentication.')) { this.closest('form').submit(); } return false;"
+                                               style="color:#006fe6" class="jenkins-table__link user-action-link">Unbypass OTP</a>
+                                        </form>
                                     </j:if>
-                                    <j:if test="${!(it.getStatus(user.id))}">
-                                        <span style="color:#006fe6" class="actionLink jenkins-table__link">Enable 2FA
-                                        </span>
+                                    <j:if test="${!it.isUserBypassed(user)}">
+                                        <!-- User is not bypassed - show Bypass OTP button -->
+                                        <form method="post" action="bypassUser2FA" style="display:inline;">
+                                            <input type="hidden" name="userId" value="${user.id}"/>
+                                            <a href="#" onclick="if(confirm('Are you sure you want to bypass 2FA for ${user.id}? They will skip 2FA authentication.')) { this.closest('form').submit(); } return false;"
+                                               style="color:#006fe6" class="jenkins-table__link user-action-link">Bypass OTP</a>
+                                        </form>
                                     </j:if>
                                 </td>
                             </tr>
@@ -102,6 +103,14 @@
                     </tbody>
                 </table>
             </form>
+
+            <!-- Success/Error Messages -->
+            <div id="successBanner" class="jenkins-alert jenkins-alert-success" style="display: none; margin-top: 20px;">
+                ✓ Action completed successfully
+            </div>
+            <div id="errorBanner" class="jenkins-alert jenkins-alert-danger" style="display: none; margin-top: 20px;">
+                ✗ Action failed. Please try again.
+            </div>
         </l:main-panel>
     </l:layout>
     <div id="premiumBanner" class="jenkins-alert jenkins-alert-warning" style="display: none;">

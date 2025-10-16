@@ -82,9 +82,13 @@ public class MoTotpUtil {
      * @return QR code URL
      */
     public static String generateQRCodeUrl(String secretKey, String accountName, String issuer) {
-        return GoogleAuthenticatorQRGenerator.getOtpAuthURL(issuer, accountName, 
-            new GoogleAuthenticatorKey.Builder(secretKey).build());
-    }
+    // tự build URL otpauth://
+    String otpAuthUrl = String.format(
+        "otpauth://totp/%s:%s?secret=%s&issuer=%s&algorithm=SHA1&digits=6&period=30",
+        issuer, accountName, secretKey, issuer
+    );
+    return otpAuthUrl;
+}
 
     /**
      * Generate QR code image as Base64 encoded string
